@@ -13,6 +13,14 @@ module.exports = {
     'airbnb',
     'prettier',
   ],
+  settings: {
+    "import/resolver": {
+      node: {
+        paths: ["src"],
+        extensions: [".js", ".jsx"]
+      }
+    },
+  },
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
