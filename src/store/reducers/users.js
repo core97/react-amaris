@@ -11,6 +11,7 @@ const initialState = {
   data: [],
   indexPagesSearched: [],
   totalPages: null,
+  itemsPerPage: null,
   isLoading: false,
   error: null,
 };
@@ -34,7 +35,8 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         data: [...state.data, ...payload.users],
-        totalPages: payload.totalPages || state.totalPages,
+        totalPages: payload.navigationList?.totalPages || state.totalPages,
+        itemsPerPage: payload.navigationList?.itemsPerPage || state.itemsPerPage,
         isLoading: false,
         error: null,
       };
@@ -56,12 +58,11 @@ export const actionCreators = {
   }),
   setUsers: (params) => ({
     type: actionTypes.SET_USERS_FETCHING,
-    // params,
     payload: params,
   }),
-  setUsersSucceded: (users, totalPages) => ({
+  setUsersSucceded: (users, navigationList) => ({
     type: actionTypes.SET_USERS_SUCCEDED,
-    payload: { users, totalPages },
+    payload: { users, navigationList },
   }),
   setUsersFailed: (message) => ({
     type: actionTypes.SET_USERS_FAILED,

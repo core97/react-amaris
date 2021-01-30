@@ -7,11 +7,9 @@ const BUTTON_LABEL = {
   previous: 'Anterior',
 };
 
-const ITEMS_PER_PAGE = 6;
-
 const ListOfUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: usersList, totalPages } = useSelector((state) => state.users);
+  const { data: usersList, totalPages, itemsPerPage } = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
   const handleClick = (e) => {
@@ -35,7 +33,7 @@ const ListOfUsers = () => {
     <section>
       <ul>
         {usersList
-          .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((eachUser) => (
             <li key={eachUser.id}>
               <p>{eachUser.email}</p>
