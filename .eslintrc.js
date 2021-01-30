@@ -34,5 +34,6 @@ module.exports = {
   ],
   rules: {
     'react/jsx-filename-extension': STATE_OF_RULE.OFF,
+    'import/prefer-default-export': STATE_OF_RULE.OFF,
   },
 };
