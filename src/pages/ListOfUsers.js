@@ -1,12 +1,57 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators as usersActions } from 'store/reducers/users';
 
-const ListOfUsers = () => {
-  const dispatch = useDispatch();
-  dispatch(usersActions.setUsers({ currentPage: 2 }));
+const BUTTON_LABEL = {
+  next: 'Siguiente',
+  previous: 'Anterior',
+};
 
-  return <h1>Hola desde Lista de Usuarios</h1>;
+const ITEMS_PER_PAGE = 6;
+
+const ListOfUsers = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: usersList, totalPages } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+
+  const handleClick = (e) => {
+    switch (e.target.innerText) {
+      case BUTTON_LABEL.previous:
+        setCurrentPage(currentPage - 1);
+        return;
+      case BUTTON_LABEL.next:
+        if (currentPage) setCurrentPage(currentPage + 1);
+        return;
+      default:
+        setCurrentPage(1);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(usersActions.setUsers({ currentPage }));
+  }, [currentPage]);
+
+  return (
+    <section>
+      <ul>
+        {usersList
+          .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+          .map((eachUser) => (
+            <li key={eachUser.id}>
+              <p>{eachUser.email}</p>
+            </li>
+          ))}
+      </ul>
+      <div style={{ display: 'flex' }}>
+        <button type="button" onClick={handleClick} disabled={currentPage === 1}>
+          {BUTTON_LABEL.previous}
+        </button>
+        <button type="button" onClick={handleClick} disabled={currentPage === totalPages}>
+          {BUTTON_LABEL.next}
+        </button>
+      </div>
+    </section>
+  );
 };
 
 export default ListOfUsers;

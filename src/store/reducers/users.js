@@ -10,6 +10,7 @@ export const actionTypes = {
 const initialState = {
   data: [],
   indexPagesSearched: [],
+  totalPages: null,
   isLoading: false,
   error: null,
 };
@@ -19,7 +20,6 @@ export default function reducer(state = initialState, action = {}) {
 
   switch (action.type) {
     case actionTypes.SAVE_PAGE_SEARCHED:
-      console.log(action)
       return {
         ...state,
         indexPagesSearched: [...state.indexPagesSearched, payload.currentPage],
@@ -34,6 +34,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         data: [...state.data, ...payload.users],
+        totalPages: payload.totalPages || state.totalPages,
         isLoading: false,
         error: null,
       };
@@ -58,9 +59,9 @@ export const actionCreators = {
     // params,
     payload: params,
   }),
-  setUsersSucceded: (users) => ({
+  setUsersSucceded: (users, totalPages) => ({
     type: actionTypes.SET_USERS_SUCCEDED,
-    payload: { users },
+    payload: { users, totalPages },
   }),
   setUsersFailed: (message) => ({
     type: actionTypes.SET_USERS_FAILED,

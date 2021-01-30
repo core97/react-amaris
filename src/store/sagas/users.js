@@ -14,7 +14,9 @@ export function* setUsers(action) {
     const getIndexPagesSearched = (state) => state.users.indexPagesSearched;
     const usersList = yield select(getUsers);
     const indexPagesSearched = yield select(getIndexPagesSearched);
-    let data = [];
+    // Data to payload
+    let users = [];
+    let totalPages = null;
 
     // Check if it has already been searched with that "currentPage"
     const hasPage = indexPagesSearched.some((eachPage) => eachPage === currentPage);
@@ -22,10 +24,11 @@ export function* setUsers(action) {
     if (!usersList.length || shouldFetch || !hasPage) {
       const response = yield call(fetchUsers, currentPage);
       yield put(usersActions.savePageSearched(currentPage));
-      data = response.data;
+      users = response.data;
+      totalPages = response.total_pages;
     }
 
-    yield put(usersActions.setUsersSucceded(data));
+    yield put(usersActions.setUsersSucceded(users, totalPages));
   } catch (error) {
     const reducerFailureAction = usersActions.setUsersFailed(
       'No se ha podido obtener los usuarios',
