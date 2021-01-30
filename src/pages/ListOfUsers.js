@@ -18,7 +18,7 @@ const ListOfUsers = () => {
         setCurrentPage(currentPage - 1);
         return;
       case BUTTON_LABEL.next:
-        if (currentPage) setCurrentPage(currentPage + 1);
+        setCurrentPage(currentPage + 1);
         return;
       default:
         setCurrentPage(1);
