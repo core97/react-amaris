@@ -3,35 +3,33 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Login from 'pages/Login';
 import ListOfUsers from 'pages/ListOfUsers';
 import DetailUser from 'pages/DetailUser';
+import ProtectedRoute from 'common/components/ProtectedRoute';
 import './App.css';
 
 function App() {
+
   return (
     <Router>
       <div>
         <nav>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/login">Login</Link>
             </li>
             <li>
               <Link to="/users/1">Detalles del usuario</Link>
             </li>
             <li>
-              <Link to="/users">Lista de usuarios</Link>
+              <Link to="/">Lista de usuarios</Link>
             </li>
           </ul>
         </nav>
         <Switch>
-          <Route path="/users/:userID">
-            <DetailUser />
-          </Route>
-          <Route path="/users">
-            <ListOfUsers />
-          </Route>
-          <Route path="/">
+          <ProtectedRoute exact path='/users/:userID' component={DetailUser} />
+          <Route exact path="/login">
             <Login />
           </Route>
+          <ProtectedRoute exact path='/' component={ListOfUsers} />
         </Switch>
       </div>
     </Router>
