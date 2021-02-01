@@ -28,7 +28,6 @@ const ListOfUsers = () => {
   };
 
   useEffect(() => {
-    console.log('refressssssssssssss')
     dispatch(usersActions.setUsers({ currentPage }));
   }, [currentPage]);
 
