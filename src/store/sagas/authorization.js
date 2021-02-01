@@ -22,7 +22,6 @@ export function* login(action) {
 
     const response = yield call(fetchLogin, credentials);
     const { token } = response;
-    window.localStorage.setItem('token', JSON.stringify(token));
     yield put(authActions.loginSucceded(USER_STATES.LOGGED, token));
 
   } catch (error) {

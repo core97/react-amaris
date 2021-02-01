@@ -10,6 +10,7 @@ export default function* rootSaga() {
      * users
      */
     takeLatest(usersActions.SET_USERS_FETCHING, usersSagas.setUsers),
+    takeLatest(usersActions.EDIT_USER_FETCHING, usersSagas.editUser),
     /**
      * authorization
      */

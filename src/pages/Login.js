@@ -8,64 +8,51 @@ import { actionCreators as authActions } from 'store/reducers/authorization';
 import { USER_STATES } from 'constants/authorization';
 
 const Login = () => {
-  const [succedForm, setSuccedForm] = useState(false);
+  const [formDone, setFormDone] = useState(false);
   const { register, handleSubmit, errors } = useForm();
-  const { userState } = useSelector((state) => state.authorization);
-  const [,, removeToken] = useLocalStorage('token');
+  const { userState, token } = useSelector((state) => state.authorization);
+  const [, setStoredToken] = useLocalStorage('token');
   const dispatch = useDispatch();
   const history = useHistory();
 
   const onSubmit = (data) => {
-    setSuccedForm(true);
     const { email, password } = data;
     dispatch(authActions.login(email, password));
+    setFormDone(true);
   };
 
-  const handleClick = () => {
-    removeToken();
-    dispatch(authActions.setUserState(USER_STATES.NOT_LOGGED));
-  }
-
   useEffect(() => {
-    if (userState === USER_STATES.LOGGED && succedForm) {
+    if (userState === USER_STATES.LOGGED && formDone) {
+      setStoredToken('token', token);
       history.push('/');
     }
   }, [userState]);
 
   return (
     <section>
-      {userState !== USER_STATES.LOGGED ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Textfield
-            label="Email"
-            type="email"
-            placeholder="Dirección de correo electrónico"
-            name="email"
-            errors={errors}
-            register={register({
-              required: { value: true, message: 'Es necesario el email' },
-            })}
-          />
-          <Textfield
-            label="Contraseña"
-            type="password"
-            placeholder="Contraseña de tu cuenta"
-            name="password"
-            errors={errors}
-            register={register({
-              required: { value: true, message: 'Es necesario la contraseña' },
-            })}
-          />
-          <button type="submit">Accceder</button>
-        </form>
-      ) : (
-        <div>
-          <h1>Ya esta autenticado</h1>
-          <h3>Navega por esta maravillosa aplicación</h3>
-          <h3>Si desea puede salir de la aplición haciendo logout</h3>
-          <button type="button" onClick={handleClick}>Salir</button>
-        </div>
-      )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Textfield
+          label="Email"
+          type="email"
+          placeholder="Dirección de correo electrónico"
+          name="email"
+          errors={errors}
+          register={register({
+            required: { value: true, message: 'Es necesario el email' },
+          })}
+        />
+        <Textfield
+          label="Contraseña"
+          type="password"
+          placeholder="Contraseña de tu cuenta"
+          name="password"
+          errors={errors}
+          register={register({
+            required: { value: true, message: 'Es necesario la contraseña' },
+          })}
+        />
+        <button type="submit">Accceder</button>
+      </form>
     </section>
   );
 };

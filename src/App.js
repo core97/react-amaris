@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Login from 'pages/Login';
@@ -7,17 +8,13 @@ import ProtectedRoute from 'common/components/ProtectedRoute';
 import './App.css';
 
 function App() {
-
   return (
     <Router>
       <div>
-        <nav>
+        <nav> 
           <ul>
             <li>
               <Link to="/login">Login</Link>
-            </li>
-            <li>
-              <Link to="/users/1">Detalles del usuario</Link>
             </li>
             <li>
               <Link to="/">Lista de usuarios</Link>
@@ -25,11 +22,9 @@ function App() {
           </ul>
         </nav>
         <Switch>
-          <ProtectedRoute exact path='/users/:userID' component={DetailUser} />
-          <Route exact path="/login">
-            <Login />
-          </Route>
-          <ProtectedRoute exact path='/' component={ListOfUsers} />
+          <ProtectedRoute exact path="/users/:userID" component={DetailUser} />
+          <Route exact path="/login" component={Login} />
+          <ProtectedRoute exact path="/" component={ListOfUsers} />
         </Switch>
       </div>
     </Router>

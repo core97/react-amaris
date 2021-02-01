@@ -5,6 +5,18 @@ import { actionCreators as usersActions } from 'store/reducers/users';
 const fetchUsers = (page) =>
   fetch(`https://reqres.in/api/users?page=${page}`).then((res) => res.json());
 
+const fetchEditUser = (userID) =>
+  fetch(`https://reqres.in/api/users/${userID}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: 'Juan',
+      job: 'Developer',
+    }),
+  }).then((res) => res.json());
+
 export function* setUsers(action) {
   try {
     const { currentPage, shouldFetch } = action.payload;
@@ -14,7 +26,7 @@ export function* setUsers(action) {
     const getIndexPagesSearched = (state) => state.users.indexPagesSearched;
     const usersList = yield select(getUsers);
     const indexPagesSearched = yield select(getIndexPagesSearched);
-    
+
     // Data to payload
     let users = [];
     let navigationList = null;
@@ -29,7 +41,7 @@ export function* setUsers(action) {
       navigationList = {
         totalPages: response.total_pages,
         itemsPerPage: response.per_page,
-      }
+      };
     }
 
     yield put(usersActions.setUsersSucceded(users, navigationList));
@@ -37,6 +49,17 @@ export function* setUsers(action) {
     const reducerFailureAction = usersActions.setUsersFailed(
       'No se ha podido obtener los usuarios',
     );
+    yield handleSagaError(error, reducerFailureAction);
+  }
+}
+
+export function* editUser(action) {
+  try {
+    const { userID } = action.payload; 
+    const response = yield call(fetchEditUser, userID);
+    yield put(usersActions.editUserSucceded(response.name, userID));
+  } catch (error) {
+    const reducerFailureAction = usersActions.editUserFailed('No se ha podido editar el usuario');
     yield handleSagaError(error, reducerFailureAction);
   }
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { actionCreators as usersActions } from 'store/reducers/users';
 
 const BUTTON_LABEL = {
@@ -36,7 +37,10 @@ const ListOfUsers = () => {
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((eachUser) => (
             <li key={eachUser.id}>
-              <p>{eachUser.email}</p>
+              <Link to={`/users/${eachUser.id}`}>
+                <p>{eachUser.email}</p>
+                <p>{eachUser.first_name}</p>
+              </Link>
             </li>
           ))}
       </ul>
