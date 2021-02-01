@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators as usersActions } from 'store/reducers/users';
 
 const DetailUser = () => {
-  const [detailUser, setUserDetail] = useState(undefined);
+  const [hasDeletedUser, setHasDeletedUser] = useState(false);
+  const history = useHistory();
   const { userID } = useParams();
-  const { data: usersList } = useSelector((state) => state.users);
+  const { data: usersList, singleUser: detailUser, error: errorUser  } = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
-  const handleClick = () => {
+  const handleClickEditUser = () => {
     dispatch(usersActions.editUser(userID));
   };
 
+  const handleClickDeleteUser = () => {
+    dispatch(usersActions.deleteUser(userID));
+    setHasDeletedUser(true);
+  };
+
   useEffect(() => {
-    setUserDetail(
-      usersList.find((eachUser) => String(eachUser.id) === userID),
-    );
+    dispatch(usersActions.resetError());
+    if (!detailUser) {
+      dispatch(usersActions.getSingleUser(userID));
+    }
+
+    return () => {
+      dispatch(usersActions.resetSingleUser());
+    }
   }, []);
+
+  useEffect(() => {
+    if (hasDeletedUser && !errorUser) {
+      history.push('/');
+    }
+  }, [usersList]);
 
   return (
     <section>
@@ -26,8 +43,11 @@ const DetailUser = () => {
       ) : (
         <div>
           <h1>{`${detailUser.first_name} ${detailUser.last_name}`}</h1>
-          <button type="button" onClick={handleClick}>
+          <button type="button" onClick={handleClickEditUser}>
             Editar usuario
+          </button>
+          <button type="button" onClick={handleClickDeleteUser}>
+            Eliminar usuario
           </button>
         </div>
       )}

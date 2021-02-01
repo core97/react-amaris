@@ -10,6 +10,7 @@ const BUTTON_LABEL = {
 
 const ListOfUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState([]);
   const { data: usersList, totalPages, itemsPerPage } = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
@@ -27,22 +28,25 @@ const ListOfUsers = () => {
   };
 
   useEffect(() => {
+    console.log('refressssssssssssss')
     dispatch(usersActions.setUsers({ currentPage }));
   }, [currentPage]);
+
+  useEffect(() => {
+    setUsersPerPage(usersList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+  }, [usersList, currentPage]);
 
   return (
     <section>
       <ul>
-        {usersList
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((eachUser) => (
-            <li key={eachUser.id}>
-              <Link to={`/users/${eachUser.id}`}>
-                <p>{eachUser.email}</p>
-                <p>{eachUser.first_name}</p>
-              </Link>
-            </li>
-          ))}
+        {usersPerPage.map((eachUser) => (
+          <li key={eachUser.id}>
+            <Link to={`/users/${eachUser.id}`}>
+              <p>{eachUser.email}</p>
+              <p>{eachUser.first_name}</p>
+            </Link>
+          </li>
+        ))}
       </ul>
       <div style={{ display: 'flex' }}>
         <button type="button" onClick={handleClick} disabled={currentPage === 1}>

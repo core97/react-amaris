@@ -5,6 +5,9 @@ import { actionCreators as usersActions } from 'store/reducers/users';
 const fetchUsers = (page) =>
   fetch(`https://reqres.in/api/users?page=${page}`).then((res) => res.json());
 
+  const fetchSingleUser = (userID) =>
+  fetch(`https://reqres.in/api/users/${userID}`).then((res) => res.json());
+
 const fetchEditUser = (userID) =>
   fetch(`https://reqres.in/api/users/${userID}`, {
     method: 'PUT',
@@ -17,15 +20,19 @@ const fetchEditUser = (userID) =>
     }),
   }).then((res) => res.json());
 
+const fetchDeleteUser = (userID) =>
+  fetch(`https://reqres.in/api/users/${userID}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then((res) => res);
+
 export function* setUsers(action) {
   try {
     const { currentPage, shouldFetch } = action.payload;
-    // function to get user state in redux
-    const getUsers = (state) => state.users.data;
-    // function to get the paging indexes searched
-    const getIndexPagesSearched = (state) => state.users.indexPagesSearched;
-    const usersList = yield select(getUsers);
-    const indexPagesSearched = yield select(getIndexPagesSearched);
+    const usersList = yield select((state) => state.users.data);
+    const indexPagesSearched = yield select((state) => state.users.indexPagesSearched);
 
     // Data to payload
     let users = [];
@@ -53,13 +60,48 @@ export function* setUsers(action) {
   }
 }
 
+export function* getSingleUser(action) {
+  try {
+    const { userID } = action.payload;
+    const usersList = yield select(state => state.users.data);
+
+    let singleUser = usersList.find((eachUser) => String(eachUser.id) === userID);
+
+    if (!singleUser) {
+      const response = yield call(fetchSingleUser, userID);
+      singleUser = response.data;
+    }
+
+    yield put(usersActions.getSingleUserSucceded(singleUser));
+
+  } catch (error) {
+    const reducerFailureAction = usersActions.getSingleUserFailed(
+      'No se ha podido obtener los detalles del usuario',
+    );
+    yield handleSagaError(error, reducerFailureAction);
+  }
+}
+
 export function* editUser(action) {
   try {
-    const { userID } = action.payload; 
+    const { userID } = action.payload;
     const response = yield call(fetchEditUser, userID);
-    yield put(usersActions.editUserSucceded(response.name, userID));
+    
+    const { name } = response;
+    yield put(usersActions.editUserSucceded(name, userID));
   } catch (error) {
     const reducerFailureAction = usersActions.editUserFailed('No se ha podido editar el usuario');
+    yield handleSagaError(error, reducerFailureAction);
+  }
+}
+
+export function* deleteUser(action) {
+  try {
+    const { userID } = action.payload;
+    yield call(fetchDeleteUser, userID);
+    yield put(usersActions.deleteUserSucceded(userID));
+  } catch (error) {
+    const reducerFailureAction = usersActions.deleteUserFailed('Error al eliminar el usuario');
     yield handleSagaError(error, reducerFailureAction);
   }
 }

@@ -1,6 +1,7 @@
 export const NAME = 'users';
 
 export const actionTypes = {
+  RESET_ERROR: '[users]/RESET_ERROR',
   SAVE_PAGE_SEARCHED: '[users]/SAVE_PAGE_SEARCHED',
   /**
    * Get users from api
@@ -8,6 +9,13 @@ export const actionTypes = {
   SET_USERS_FETCHING: '[users]/SET_USERS_FETCHING',
   SET_USERS_SUCCEDED: '[users]/SET_USERS_SUCCEDED',
   SET_USERS_FAILED: '[users]/SET_USERS_FAILED',
+  /**
+   * Get single user from api
+   */
+  GET_SINGLE_USER_FETCHING: '[users]/GET_SINGLE_USER_FETCHING',
+  GET_SINGLE_USER_SUCCEDED: '[users]/GET_SINGLE_USER_SUCCEDED',
+  GET_SINGLE_USER_FAILED: '[users]/GET_SINGLE_USER_FAILED',
+  RESET_SINGLE_USER: '[users]/RESET_SINGLE_USER',
   /**
    * Edit user from api
    */
@@ -24,6 +32,7 @@ export const actionTypes = {
 
 const initialState = {
   data: [],
+  singleUser: null,
   indexPagesSearched: [],
   totalPages: null,
   itemsPerPage: null,
@@ -39,6 +48,11 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         indexPagesSearched: [...state.indexPagesSearched, payload.currentPage],
+      };
+    case actionTypes.RESET_ERROR:
+      return {
+        ...state,
+        error: null,
       };
     case actionTypes.SET_USERS_FETCHING:
       return {
@@ -61,6 +75,32 @@ export default function reducer(state = initialState, action = {}) {
         isLoading: false,
         error: payload.message,
       };
+    case actionTypes.GET_SINGLE_USER_FETCHING:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+    case actionTypes.GET_SINGLE_USER_SUCCEDED:
+      return {
+        ...state,
+        singleUser: payload.singleUser,
+        isLoading: false,
+        error: null,
+      };
+    case actionTypes.GET_SINGLE_USER_FAILED:
+      return {
+        ...state,
+        isLoading: false,
+        error: payload.message,
+      };
+    case actionTypes.RESET_SINGLE_USER:
+      return {
+        ...state,
+        singleUser: null,
+        isLoading: false,
+        error: null,
+      };
     case actionTypes.EDIT_USER_FETCHING:
       return {
         ...state,
@@ -68,7 +108,6 @@ export default function reducer(state = initialState, action = {}) {
         error: null,
       };
     case actionTypes.EDIT_USER_SUCCEDED:
-      console.log(payload)
       return {
         ...state,
         data: state.data.map((eachUser) => {
@@ -87,6 +126,25 @@ export default function reducer(state = initialState, action = {}) {
         isLoading: false,
         error: payload.message,
       };
+    case actionTypes.DELETE_USER_FETCHING:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+    case actionTypes.DELETE_USER_SUCCEDED:
+      return {
+        ...state,
+        data: state.data.filter((eachUser) => String(eachUser.id) !== payload.userID),
+        isLoading: false,
+        error: null,
+      };
+    case actionTypes.DELETE_USER_FAILED:
+      return {
+        ...state,
+        isLoading: false,
+        error: payload.message,
+      };
     default:
       return state;
   }
@@ -99,6 +157,9 @@ export const actionCreators = {
   savePageSearched: (currentPage) => ({
     type: actionTypes.SAVE_PAGE_SEARCHED,
     payload: { currentPage },
+  }),
+  resetError: () => ({
+    type: actionTypes.RESET_ERROR,
   }),
   /**
    * @param {Object} params
@@ -129,6 +190,32 @@ export const actionCreators = {
   /**
    * @param {number|string} userID
    */
+  getSingleUser: (userID) => ({
+    type: actionTypes.GET_SINGLE_USER_FETCHING,
+    payload: { userID},
+  }),
+  /**
+   * @param {Object} singleUser - response data
+   * @param {number} singleUser.id
+   * @param {string} singleUser.email
+   * @param {string} singleUser.first_name
+   * @param {string} singleUser.last_name
+   * @param {string} singleUser.avatar
+   */
+  getSingleUserSucceded: (singleUser) => ({
+    type: actionTypes.GET_SINGLE_USER_SUCCEDED,
+    payload: { singleUser },
+  }),
+  /**
+   * @param {string} message - error message
+   */
+  getSingleUserFailed: (message) => ({
+    type: actionTypes.GET_SINGLE_USER_FAILED,
+    payload: { message },
+  }),
+  resetSingleUser: () => ({
+    type: actionTypes.RESET_SINGLE_USER,
+  }),
   editUser: (userID) => ({
     type: actionTypes.EDIT_USER_FETCHING,
     payload: { userID },
@@ -141,8 +228,32 @@ export const actionCreators = {
     type: actionTypes.EDIT_USER_SUCCEDED,
     payload: { firstName, userID },
   }),
+  /**
+   * @param {string} message - error message
+   */
   editUserFailed: (message) => ({
-    type: actionTypes.EDIT_USER_SUCCEDED,
+    type: actionTypes.EDIT_USER_FAILED,
+    payload: message,
+  }),
+  /**
+   * @param {number} userID
+   */
+  deleteUser: (userID) => ({
+    type: actionTypes.DELETE_USER_FETCHING,
+    payload: { userID },
+  }),
+  /**
+   * @param {string} userID
+   */
+  deleteUserSucceded: (userID) => ({
+    type: actionTypes.DELETE_USER_SUCCEDED,
+    payload: { userID },
+  }),
+  /**
+   * @param {string} message - error message
+   */
+  deleteUserFailed: (message) => ({
+    type: actionTypes.DELETE_USER_FAILED,
     payload: message,
   }),
 };
