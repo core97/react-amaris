@@ -2,12 +2,13 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { useLocalStorage } from 'common/hooks/useLocalStorage';
+import { useSelector } from 'react-redux';
+import { USER_STATES } from 'constants/authorization';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const [storedToken] = useLocalStorage('token');
+  const { userState } = useSelector((state) => state.authorization);
 
-  if (!storedToken) {
+  if (userState !== USER_STATES.LOGGED) {
     return <Redirect to="/login" />;
   }
 
