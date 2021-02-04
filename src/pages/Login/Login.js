@@ -6,6 +6,7 @@ import Textfield, { TYPE_TEXTFIELD } from 'common/components/Textfield/Textfield
 import Button, { TYPE_BUTTON } from 'common/components/Button/Button';
 import { useLocalStorage } from 'common/hooks/useLocalStorage';
 import { actionCreators as authActions } from 'store/reducers/authorization';
+import { actionCreators as usersActions } from 'store/reducers/users';
 import { USER_STATES } from 'constants/authorization';
 import {
   StyledButtonArea,
@@ -31,6 +32,7 @@ const Login = () => {
 
   const handleClickLogOut = () => {
     dispatch(authActions.setUserState(USER_STATES.NOT_LOGGED));
+    dispatch(usersActions.resetAll());
     deleteStoredToken();
   };
 
