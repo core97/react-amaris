@@ -3,7 +3,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import Button, { TYPE_BUTTON } from 'common/components/Button/Button';
-import Textfield from 'common/components/Textfield/Textfield';
+import Textfield, { TYPE_TEXTFIELD } from 'common/components/Textfield/Textfield';
 import { actionCreators as usersActions } from 'store/reducers/users';
 import {
   StyledAvatar,
@@ -91,7 +91,6 @@ const DetailUser = () => {
             </StyledAvatarWrapper>
             <Textfield
               label="Nombre"
-              type="text"
               name="firstName"
               errors={errors}
               defaultValue={detailUser.first_name}
@@ -101,7 +100,6 @@ const DetailUser = () => {
             />
             <Textfield
               label="Apellidos"
-              type="text"
               name="lastName"
               errors={errors}
               defaultValue={detailUser.last_name}
@@ -111,7 +109,7 @@ const DetailUser = () => {
             />
             <Textfield
               label="Email"
-              type="text"
+              type={TYPE_TEXTFIELD.email}
               name="email"
               errors={errors}
               defaultValue={detailUser.email}

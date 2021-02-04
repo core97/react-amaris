@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { StyledPrimaryButton, StyledSecondaryButton} from './styles';
 
 export const TYPE_BUTTON = {
@@ -27,6 +27,22 @@ const Button = ({ onClick, type, secondary, isFullWidth, disabled, children }) =
       {children}
     </StyledPrimaryButton>
   );
+};
+
+Button.propTypes = {
+  onClick: PropTypes.func,
+  type: PropTypes.oneOf([TYPE_BUTTON.button, TYPE_BUTTON.submit]).isRequired,
+  secondary: PropTypes.bool,
+  isFullWidth: PropTypes.bool,
+  disabled: PropTypes.bool,
+  children: PropTypes.node.isRequired,
+};
+
+Button.defaultProps = {
+  onClick: null,
+  secondary: false,
+  isFullWidth: false,
+  disabled: false,
 };
 
 export default Button;

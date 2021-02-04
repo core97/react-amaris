@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { USER_STATES } from 'constants/authorization';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
@@ -13,6 +13,10 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
   }
 
   return <Route {...rest} render={(props) => <Component {...rest} {...props} />} />;
+};
+
+ProtectedRoute.propTypes = {
+  component: PropTypes.elementType.isRequired,
 };
 
 export default ProtectedRoute;

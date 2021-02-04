@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import Textfield from 'common/components/Textfield/Textfield';
+import Textfield, { TYPE_TEXTFIELD } from 'common/components/Textfield/Textfield';
 import Button, { TYPE_BUTTON } from 'common/components/Button/Button';
 import { useLocalStorage } from 'common/hooks/useLocalStorage';
 import { actionCreators as authActions } from 'store/reducers/authorization';
@@ -48,7 +48,7 @@ const Login = () => {
             <StyledTitle>Accede a tu cuenta</StyledTitle>
             <Textfield
               label="Email"
-              type="email"
+              type={TYPE_TEXTFIELD.email}
               placeholder="Dirección de correo electrónico"
               name="email"
               errors={errors}
@@ -58,7 +58,7 @@ const Login = () => {
             />
             <Textfield
               label="Contraseña"
-              type="password"
+              type={TYPE_TEXTFIELD.password}
               placeholder="Contraseña de tu cuenta"
               name="password"
               errors={errors}

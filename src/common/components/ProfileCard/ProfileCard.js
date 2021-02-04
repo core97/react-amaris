@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyledCardWrapper,
   StyledBackgroundImage,
@@ -22,5 +22,12 @@ const ProfileCard = ({ title, subtitle, img, bgColor }) => (
     </StyledInfoWrapper>
   </StyledCardWrapper>
 );
+
+ProfileCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
+  bgColor: PropTypes.string.isRequired,
+};
 
 export default ProfileCard;
