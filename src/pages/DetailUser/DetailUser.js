@@ -26,22 +26,22 @@ const DetailUser = () => {
   const { register, handleSubmit, errors, watch } = useForm();
   const history = useHistory();
   const { userID } = useParams();
-  const { data: usersList, singleUser: detailUser, error: errorUser } = useSelector(
+  const { data: usersList, singleUser: detailUser, error: errorUser, isLoading } = useSelector(
     (state) => state.users,
   );
   const dispatch = useDispatch();
 
   const handleClickDeleteUser = () => {
-    dispatch(usersActions.deleteUser(userID));
     setHasDeletedUser(true);
+    dispatch(usersActions.deleteUser(userID));
   };
 
   const onSubmit = (data) => {
+    setHasEditedUser(true);
     const { firstName, lastName, email } = data;
     const userData = { firstName, lastName, email };
 
     dispatch(usersActions.editUser(userID, userData));
-    setHasEditedUser(true);
   };
 
   useEffect(() => {
@@ -118,10 +118,20 @@ const DetailUser = () => {
               })}
             />
             <StyledButtonArea>
-              <Button secondary type={TYPE_BUTTON.button} onClick={handleClickDeleteUser}>
+              <Button
+                secondary
+                type={TYPE_BUTTON.button}
+                onClick={handleClickDeleteUser}
+                disabled={isLoading}
+                isLoading={isLoading && hasDeletedUser}
+              >
                 {BUTTON_LABEL.deleteUser}
               </Button>
-              <Button type={TYPE_BUTTON.submit} disabled={disabledBtnEdit}>
+              <Button
+                type={TYPE_BUTTON.submit}
+                disabled={disabledBtnEdit || isLoading}
+                isLoading={isLoading && hasEditedUser}
+              >
                 {BUTTON_LABEL.editUser}
               </Button>
             </StyledButtonArea>

@@ -13,7 +13,7 @@ const BUTTON_LABEL = {
 
 const ListOfUsers = () => {
   const [usersPerPage, setUsersPerPage] = useState([]);
-  const { data: usersList, totalPages, itemsPerPage, currentPage } = useSelector(
+  const { data: usersList, totalPages, itemsPerPage, currentPage, isLoading } = useSelector(
     (state) => state.users,
   );
   const dispatch = useDispatch();
@@ -76,7 +76,8 @@ const ListOfUsers = () => {
           secondary
           type={TYPE_BUTTON.button}
           onClick={handleClick}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || isLoading}
+          isLoading={isLoading}
         >
           {BUTTON_LABEL.next}
         </Button>

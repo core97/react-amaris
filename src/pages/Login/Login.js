@@ -7,12 +7,18 @@ import Button, { TYPE_BUTTON } from 'common/components/Button/Button';
 import { useLocalStorage } from 'common/hooks/useLocalStorage';
 import { actionCreators as authActions } from 'store/reducers/authorization';
 import { USER_STATES } from 'constants/authorization';
-import { StyledButtonArea, StyledContainer, StyledFormWrapper, StyledForm, StyledTitle } from './styles';
+import {
+  StyledButtonArea,
+  StyledContainer,
+  StyledFormWrapper,
+  StyledForm,
+  StyledTitle,
+} from './styles';
 
 const Login = () => {
   const [formDone, setFormDone] = useState(false);
   const { register, handleSubmit, errors } = useForm();
-  const { userState, token } = useSelector((state) => state.authorization);
+  const { userState, token, isLoading } = useSelector((state) => state.authorization);
   const [, setStoredToken, deleteStoredToken] = useLocalStorage('token', token);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -26,7 +32,7 @@ const Login = () => {
   const handleClickLogOut = () => {
     dispatch(authActions.setUserState(USER_STATES.NOT_LOGGED));
     deleteStoredToken();
-  }
+  };
 
   useEffect(() => {
     if (userState === USER_STATES.LOGGED && formDone) {
@@ -40,7 +46,9 @@ const Login = () => {
       {userState === USER_STATES.LOGGED ? (
         <StyledContainer>
           <StyledTitle>Ya estás logueado 🎉🎉🎉🎉</StyledTitle>
-          <Button type={TYPE_BUTTON.button} secondary onClick={handleClickLogOut}>Cerrar sesión</Button>
+          <Button type={TYPE_BUTTON.button} secondary onClick={handleClickLogOut}>
+            Cerrar sesión
+          </Button>
         </StyledContainer>
       ) : (
         <StyledFormWrapper>
@@ -67,7 +75,12 @@ const Login = () => {
               })}
             />
             <StyledButtonArea>
-              <Button type={TYPE_BUTTON.submit} isFullWidth>
+              <Button
+                type={TYPE_BUTTON.submit}
+                isFullWidth
+                disabled={isLoading}
+                isLoading={isLoading}
+              >
                 Accceder
               </Button>
             </StyledButtonArea>
