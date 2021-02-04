@@ -3,6 +3,7 @@ export const NAME = 'users';
 
 export const actionTypes = {
   RESET_ERROR: '[users]/RESET_ERROR',
+  RESET_ALL: '[users]/RESET_ALL',
   SAVE_PAGE_SEARCHED: '[users]/SAVE_PAGE_SEARCHED',
   CHANGE_CURRENT_PAGE: '[users]/CHANGE_CURRENT_PAGE',
   /**
@@ -57,6 +58,11 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         error: null,
       };
+      case actionTypes.RESET_ALL:
+        return {
+          ...state,
+          ...initialState
+        };
     case actionTypes.CHANGE_CURRENT_PAGE:
       return {
         ...state,
@@ -169,6 +175,9 @@ export const actionCreators = {
   }),
   resetError: () => ({
     type: actionTypes.RESET_ERROR,
+  }),
+  resetAll: () => ({
+    type: actionTypes.RESET_ALL,
   }),
   /**
    * @param {number} currentPage
