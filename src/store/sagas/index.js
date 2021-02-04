@@ -9,7 +9,7 @@ export default function* rootSaga() {
     /**
      * users
      */
-    takeLatest(usersActions.SET_USERS_FETCHING, usersSagas.setUsers),
+    takeLatest(usersActions.GET_USERS_FETCHING, usersSagas.getUsers),
     takeLatest(usersActions.GET_SINGLE_USER_FETCHING, usersSagas.getSingleUser),
     takeLatest(usersActions.EDIT_USER_FETCHING, usersSagas.editUser),
     takeLatest(usersActions.DELETE_USER_FETCHING, usersSagas.deleteUser),

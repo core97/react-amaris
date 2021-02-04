@@ -51,18 +51,33 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 export const actionCreators = {
+  /**
+   * @param {USER_STATES.LOGGED | USER_STATES. NOT_LOGGED | USER_STATES.NOT_KNOWN} userState 
+   * @param {string} token 
+   */
   setUserState: (userState, token) => ({
     type: actionTypes.SET_USER_STATE,
     payload: { userState, token }
   }),
+  /**
+   * @param {string} email 
+   * @param {string} password 
+   */
   login: (email, password) => ({
     type: actionTypes.LOGIN_FETCHING,
     payload: { email, password },
   }),
+  /**
+   * @param {USER_STATES.LOGGED | USER_STATES. NOT_LOGGED | USER_STATES.NOT_KNOWN} userState 
+   * @param {string} token
+   */
   loginSucceded: (userState, token) => ({
     type: actionTypes.LOGIN_SUCCEDED,
     payload: { userState, token },
   }),
+  /**
+   * @param {string} message 
+   */
   loginFailed: (message) => ({
     type: actionTypes.LOGIN_FAILED,
     payload: { message },

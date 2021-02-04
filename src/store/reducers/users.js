@@ -1,14 +1,16 @@
+/* eslint-disable no-param-reassign */
 export const NAME = 'users';
 
 export const actionTypes = {
   RESET_ERROR: '[users]/RESET_ERROR',
   SAVE_PAGE_SEARCHED: '[users]/SAVE_PAGE_SEARCHED',
+  CHANGE_CURRENT_PAGE: '[users]/CHANGE_CURRENT_PAGE',
   /**
    * Get users from api
    */
-  SET_USERS_FETCHING: '[users]/SET_USERS_FETCHING',
-  SET_USERS_SUCCEDED: '[users]/SET_USERS_SUCCEDED',
-  SET_USERS_FAILED: '[users]/SET_USERS_FAILED',
+  GET_USERS_FETCHING: '[users]/GET_USERS_FETCHING',
+  GET_USERS_SUCCEDED: '[users]/GET_USERS_SUCCEDED',
+  GET_USERS_FAILED: '[users]/GET_USERS_FAILED',
   /**
    * Get single user from api
    */
@@ -33,6 +35,7 @@ export const actionTypes = {
 const initialState = {
   data: [],
   singleUser: null,
+  currentPage: 1,
   indexPagesSearched: [],
   totalPages: null,
   itemsPerPage: null,
@@ -54,13 +57,18 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         error: null,
       };
-    case actionTypes.SET_USERS_FETCHING:
+    case actionTypes.CHANGE_CURRENT_PAGE:
+      return {
+        ...state,
+        currentPage: payload.currentPage,
+      };
+    case actionTypes.GET_USERS_FETCHING:
       return {
         ...state,
         isLoading: true,
         error: null,
       };
-    case actionTypes.SET_USERS_SUCCEDED:
+    case actionTypes.GET_USERS_SUCCEDED:
       return {
         ...state,
         data: [...state.data, ...payload.users],
@@ -69,7 +77,7 @@ export default function reducer(state = initialState, action = {}) {
         isLoading: false,
         error: null,
       };
-    case actionTypes.SET_USERS_FAILED:
+    case actionTypes.GET_USERS_FAILED:
       return {
         ...state,
         isLoading: false,
@@ -112,8 +120,9 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         data: state.data.map((eachUser) => {
           if (String(eachUser.id) === String(payload.userID)) {
-            // eslint-disable-next-line no-param-reassign
             eachUser.first_name = payload.firstName;
+            eachUser.last_name = payload.lastName;
+            eachUser.email = payload.email;
           }
           return eachUser;
         }),
@@ -152,7 +161,7 @@ export default function reducer(state = initialState, action = {}) {
 
 export const actionCreators = {
   /**
-   * @param {number|string} params.currentPage - page to make the request to the api
+   * @param {number} currentPage
    */
   savePageSearched: (currentPage) => ({
     type: actionTypes.SAVE_PAGE_SEARCHED,
@@ -162,29 +171,39 @@ export const actionCreators = {
     type: actionTypes.RESET_ERROR,
   }),
   /**
-   * @param {Object} params
-   * @param {number|string} params.currentPage - page to make the request to the api
-   * @param {boolean} [params.shouldFetch] - forces to do the request to the api
+   * @param {number} currentPage
    */
-  setUsers: (params) => ({
-    type: actionTypes.SET_USERS_FETCHING,
+  changeCurrentPage: (currentPage) => ({
+    type: actionTypes.CHANGE_CURRENT_PAGE,
+    payload: { currentPage },
+  }),
+  /**
+   * @param {Object} params
+   * @param {number} params.currentPage
+   * @param {boolean} [params.shouldFetch]
+   */
+  getUsers: (params) => ({
+    type: actionTypes.GET_USERS_FETCHING,
     payload: params,
   }),
   /**
-   * @param {Object[]} users - response data
-   * @param {Object} navigationList - response data to make pagination
+   * @param {Object[]} users
+   * @param {string} users.first_name
+   * @param {string} users.last_name
+   * @param {string} users.email
+   * @param {Object} navigationList
    * @param {number} [navigationList.totalPages]
    * @param {number} [navigationList.itemsPerPage]
    */
-  setUsersSucceded: (users, navigationList) => ({
-    type: actionTypes.SET_USERS_SUCCEDED,
+  getUsersSucceded: (users, navigationList) => ({
+    type: actionTypes.GET_USERS_SUCCEDED,
     payload: { users, navigationList },
   }),
   /**
-   * @param {string} message - error message
+   * @param {string} message
    */
-  setUsersFailed: (message) => ({
-    type: actionTypes.SET_USERS_FAILED,
+  getUsersFailed: (message) => ({
+    type: actionTypes.GET_USERS_FAILED,
     payload: { message },
   }),
   /**
@@ -192,10 +211,10 @@ export const actionCreators = {
    */
   getSingleUser: (userID) => ({
     type: actionTypes.GET_SINGLE_USER_FETCHING,
-    payload: { userID},
+    payload: { userID },
   }),
   /**
-   * @param {Object} singleUser - response data
+   * @param {Object} singleUser
    * @param {number} singleUser.id
    * @param {string} singleUser.email
    * @param {string} singleUser.first_name
@@ -207,7 +226,7 @@ export const actionCreators = {
     payload: { singleUser },
   }),
   /**
-   * @param {string} message - error message
+   * @param {string} message
    */
   getSingleUserFailed: (message) => ({
     type: actionTypes.GET_SINGLE_USER_FAILED,
@@ -216,27 +235,36 @@ export const actionCreators = {
   resetSingleUser: () => ({
     type: actionTypes.RESET_SINGLE_USER,
   }),
-  editUser: (userID) => ({
-    type: actionTypes.EDIT_USER_FETCHING,
-    payload: { userID },
-  }),
   /**
-   * @param {string} firstName
-   * @param {number|string} userID
+   * @param {string|number} userID
+   * @param {Object} userData
+   * @param {string} [userData.firstName]
+   * @param {string} [userData.lastName]
+   * @param {string} [userData.email]
    */
-  editUserSucceded: (firstName, userID) => ({
-    type: actionTypes.EDIT_USER_SUCCEDED,
-    payload: { firstName, userID },
+  editUser: (userID, userData) => ({
+    type: actionTypes.EDIT_USER_FETCHING,
+    payload: { userID, ...userData },
   }),
   /**
-   * @param {string} message - error message
+   * @param {number|string} userID
+   * @param {string} [userData.firstName]
+   * @param {string} [userData.lastName]
+   * @param {string} [userData.email]
+   */
+  editUserSucceded: (userData, userID) => ({
+    type: actionTypes.EDIT_USER_SUCCEDED,
+    payload: { ...userData, userID },
+  }),
+  /**
+   * @param {string} message
    */
   editUserFailed: (message) => ({
     type: actionTypes.EDIT_USER_FAILED,
     payload: message,
   }),
   /**
-   * @param {number} userID
+   * @param {number|string} userID
    */
   deleteUser: (userID) => ({
     type: actionTypes.DELETE_USER_FETCHING,
@@ -250,7 +278,7 @@ export const actionCreators = {
     payload: { userID },
   }),
   /**
-   * @param {string} message - error message
+   * @param {string} message
    */
   deleteUserFailed: (message) => ({
     type: actionTypes.DELETE_USER_FAILED,
